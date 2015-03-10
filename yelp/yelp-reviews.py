@@ -15,25 +15,36 @@ count = 0
 done = 0
 start = time.time()
 
-with open(dataset_file) as dataset:
-    count = sum(1 for line in dataset)
+for dirname, dirnames, filenames in os.walk(dataset_file):
+                count = len(filenames)
+                for filename in filenames:
+                    file_path = os.path.join(dirname, filename)
+                    biz = json.load(open(file_path, 'r'))
 
-with open(dataset_file) as dataset:
-    next(dataset)
-    for line in dataset:
-        try:
-            data = json.loads(line)
-        except ValueError:
-            print 'Oops!'
-        if data["type"] == "review":
-            reviews_collection.insert({
-                "reviewId": data["review_id"],
-                "business": data["business_id"],
-                "text": data["text"]
-            })
+                    if 'id' in biz:
+                        bid = biz['id']
+                    else:
+                        bid = biz['product_id']
 
-        done += 1
-        if done % 100 == 0:
-            end = time.time()
-            os.system('cls')
-            print 'Done ' + str(done) + ' out of ' + str(count) + ' in ' + str((end - start))
+
+                    if len(biz['reviews']) <= 50:
+                        continue
+
+                    for r in biz['reviews']:
+                        rid = r['review_id']
+                        r['business_id'] = bid
+
+                        content = r['content']
+                        date = r['date']
+
+                        reviews_collection.insert({
+                            "reviewId": rid,
+                            "business": bid,
+                            "text": content,
+                            "date": date
+                        })
+                    done += 1
+                    if done % 100 == 0:
+                        end = time.time()
+                        os.system('cls')
+                        print 'Done ' + str(done) + ' out of ' + str(count) + ' in ' + str((end - start))
