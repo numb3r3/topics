@@ -20,3 +20,5 @@ for topic in lda.show_topics(num_topics=lda_num_topics):
     print '#' + str(i) + ': ' + topic
     i += 1
 
+print lda[0]
+

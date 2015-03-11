@@ -30,19 +30,23 @@ for dirname, dirnames, filenames in os.walk(dataset_file):
                     if len(biz['reviews']) <= 50:
                         continue
 
+                    text = ''
                     for r in biz['reviews']:
                         rid = r['review_id']
                         r['business_id'] = bid
 
                         content = r['content']
-                        date = r['date']
+                        text += content + '\n'
 
-                        reviews_collection.insert({
-                            "reviewId": rid,
-                            "business": bid,
-                            "text": content,
-                            "date": date
-                        })
+                        # date = r['date']
+
+                    reviews_collection.insert({
+                        "reviewId": bid,
+                        "business": bid,
+                        "text": text,
+                        "num_reviews": len(biz['reviews'])
+                    })
+                    
                     done += 1
                     if done % 100 == 0:
                         end = time.time()

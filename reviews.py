@@ -39,7 +39,8 @@ for review in reviews_cursor:
         "reviewId": review["reviewId"],
         "business": review["business"],
         "text": review["text"],
-        "words": words
+        "words": words,
+        "num_reviews": review['num_reviews']
     })
 
     done += 1

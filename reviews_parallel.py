@@ -46,7 +46,8 @@ def worker(identifier, skip, count):
                 "reviewId": review["reviewId"],
                 "business": review["business"],
                 "text": review["text"],
-                "words": words
+                "words": words,
+                "num_reviews": review['num_reviews']
             })
 
             done += 1
