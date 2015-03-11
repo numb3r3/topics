@@ -66,7 +66,7 @@ def worker(identifier, skip, count):
             })
 
             done += 1
-            if done % 100 == 0:
+            if done % 10 == 0:
                 end = time.time()
                 print 'Worker' + str(identifier) + ': Done ' + str(done) + ' out of ' + str(count) + ' in ' + (
                     "%.2f" % (end - start)) + ' sec ~ ' + ("%.2f" % (done / (end - start))) + '/sec'
@@ -80,10 +80,15 @@ def main():
     count = reviews_cursor.count()
     workers = 5
     batch = count / workers
+    left = count % workers
 
     jobs = []
     for i in range(workers):
-        p = multiprocessing.Process(target=worker, args=((i + 1), i * batch, count / workers))
+        size = count/workers
+        if i == workers - 1:
+            size += left
+
+        p = multiprocessing.Process(target=worker, args=((i + 1), i * batch, size))
         jobs.append(p)
         p.start()
 
