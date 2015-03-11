@@ -36,7 +36,7 @@ for dirname, dirnames, filenames in os.walk(dataset_file):
                         r['business_id'] = bid
 
                         content = r['content']
-                        text += content + '\n'
+                        text += content + '\n\n'
 
                         # date = r['date']
 
@@ -46,7 +46,7 @@ for dirname, dirnames, filenames in os.walk(dataset_file):
                         "text": text,
                         "num_reviews": len(biz['reviews'])
                     })
-                    
+
                     done += 1
                     if done % 100 == 0:
                         end = time.time()

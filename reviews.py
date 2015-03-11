@@ -25,20 +25,34 @@ start = time.time()
 
 for review in reviews_cursor:
     words = []
-    sentences = nltk.sent_tokenize(review["text"].lower())
 
-    for sentence in sentences:
-        tokens = nltk.word_tokenize(sentence)
-        text = [word for word in tokens if word not in stopwords]
-        tagged_text = nltk.pos_tag(text)
+    reviews = review['text'].split('\n\n')
+    for r in reviews:
 
-        for word, tag in tagged_text:
-            words.append({"word": word, "pos": tag})
+        sentences = nltk.sent_tokenize(r.lower())
+
+        for sentence in sentences:
+            tokens = nltk.word_tokenize(sentence)
+            text = [word for word in tokens if word not in stopwords]
+            tagged_text = nltk.pos_tag(text)
+
+            for word, tag in tagged_text:
+                words.append({"word": word, "pos": tag})
+
+    # sentences = nltk.sent_tokenize(review["text"].lower())
+
+    # for sentence in sentences:
+    #     tokens = nltk.word_tokenize(sentence)
+    #     text = [word for word in tokens if word not in stopwords]
+    #     tagged_text = nltk.pos_tag(text)
+
+    #     for word, tag in tagged_text:
+    #         words.append({"word": word, "pos": tag})
 
     tags_collection.insert({
         "reviewId": review["reviewId"],
         "business": review["business"],
-        "text": review["text"],
+        # "text": review["text"],
         "words": words,
         "num_reviews": review['num_reviews']
     })
