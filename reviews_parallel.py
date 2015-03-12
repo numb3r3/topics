@@ -38,12 +38,12 @@ def worker(identifier, skip, count):
 
     batch_size = 5
     for batch in range(0, count, batch_size):
-        # reviews_cursor = reviews_collection.find().skip(skip + batch).limit(batch_size)
+        reviews_cursor = reviews_collection.find().skip(skip + batch).limit(batch_size)
 
         # option 1: turn off the time out request, e.g., find(timetout=False)
         # option 2: estimate the size of a bache, 10 minutes to finish
-        for review in reviews_collection.find().skip(skip + batch).batch_size(batch_size):
-        # for review in reviews_cursor:
+        # for review in reviews_collection.find().skip(skip + batch).batch_size(batch_size):
+        for review in reviews_cursor:
             words = []
 
             reviews = review['text'].split('\n\n')

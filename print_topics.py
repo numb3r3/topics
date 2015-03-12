@@ -19,7 +19,7 @@ class IDCorpus(object):
     def __iter__(self):
         self.cursor.rewind()
         for review in self.cursor:
-            yield (review['business'], review['reviewId'], self.reviews_dictionary.doc2bow(review["words"]))
+            yield (review['business'], int(review['num_reviews']), self.reviews_dictionary.doc2bow(review["words"]))
 
     def serialize(self):
         BleiCorpus.serialize(self.corpus_path, self, id2word=self.reviews_dictionary)
@@ -46,13 +46,13 @@ def main():
 
     num_topics = 50
 
-    for bid, rid, bow in IDCorpus(reviews_cursor, dictionary, corpus_path):
+    for bid, num, bow in IDCorpus(reviews_cursor, dictionary, corpus_path):
         dist = [0]*num_topics
         for i, p in lda[bow]:
             dist[i] = p
         # print rid, 
         # print dist
-        print '%s\t%s\t%s' % (bid,rid, ','.join(['%.3f'%p for p in dist]))
+        print '%s\t%s\t%s' % (bid, num, ','.join(['%.3f'%p for p in dist]))
         # print sum(dist)
 
 

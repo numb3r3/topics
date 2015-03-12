@@ -47,7 +47,7 @@ class Train:
     @staticmethod
     def run(lda_model_path, corpus_path, num_topics, id2word):
         corpus = corpora.BleiCorpus(corpus_path)
-        lda = gensim.models.LdaModel(corpus, num_topics=num_topics, id2word=id2word)
+        lda = gensim.models.LdaModel(corpus, num_topics=num_topics, id2word=id2word, alpha=10)
         lda.save(lda_model_path)
 
         return lda
