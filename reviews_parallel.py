@@ -4,6 +4,12 @@ import sys
 
 import nltk
 from pymongo import MongoClient
+import gridfs
+
+try:
+    import cPickle as pickle
+except:
+    import pickle
 
 from settings import Settings
 
@@ -24,13 +30,20 @@ def worker(identifier, skip, count):
     stopwords = load_stopwords()
     reviews_collection = MongoClient(Settings.MONGO_CONNECTION_STRING)[Settings.REVIEWS_DATABASE][
         Settings.REVIEWS_COLLECTION]
-    tags_collection = MongoClient(Settings.MONGO_CONNECTION_STRING)[Settings.TAGS_DATABASE][
-        Settings.REVIEWS_COLLECTION]
 
-    batch_size = 50
+    tags_db = MongoClient(Settings.MONGO_CONNECTION_STRING)[Settings.TAGS_DATABASE]
+    tags_fs = gridfs.GridFS(tags_db)
+    # tags_collection = MongoClient(Settings.MONGO_CONNECTION_STRING)[Settings.TAGS_DATABASE][
+    #     Settings.REVIEWS_COLLECTION]
+
+    batch_size = 5
     for batch in range(0, count, batch_size):
-        reviews_cursor = reviews_collection.find().skip(skip + batch).limit(batch_size)
-        for review in reviews_cursor:
+        # reviews_cursor = reviews_collection.find().skip(skip + batch).limit(batch_size)
+
+        # option 1: turn off the time out request, e.g., find(timetout=False)
+        # option 2: estimate the size of a bache, 10 minutes to finish
+        for review in reviews_collection.find().skip(skip + batch).batch_size(batch_size):
+        # for review in reviews_cursor:
             words = []
 
             reviews = review['text'].split('\n\n')
@@ -57,13 +70,15 @@ def worker(identifier, skip, count):
             #     for word, tag in tagged_text:
             #         words.append({"word": word, "pos": tag})
 
-            tags_collection.insert({
-                "reviewId": review["reviewId"],
-                "business": review["business"],
-                # "text": review["text"],
-                "words": words,
-                "num_reviews": review['num_reviews']
-            })
+            # tags_collection.insert({
+            #     "reviewId": review["reviewId"],
+            #     "business": review["business"],
+            #     # "text": review["text"],
+            #     "words": words,
+            #     "num_reviews": review['num_reviews']
+            # })
+
+            tags_fs.put(pickle.dumps(words), filename=review["business"], num_reviews=str(review['num_reviews']))
 
             done += 1
             if done % 10 == 0:
