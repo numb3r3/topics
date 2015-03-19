@@ -58,8 +58,8 @@ def main():
 
     dictionary_path = "models/dictionary.dict"
     corpus_path = "models/corpus.lda-c"
-    lda_num_topics = 50
-    lda_model_path = "models/lda_model_50_topics.lda"
+    lda_num_topics = 40
+    lda_model_path = "models/lda_model_%d_topics.lda" % lda_num_topics
 
     corpus_collection = MongoClient(Settings.MONGO_CONNECTION_STRING)[Settings.TAGS_DATABASE][
         Settings.CORPUS_COLLECTION]

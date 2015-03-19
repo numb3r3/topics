@@ -33,7 +33,7 @@ def main():
 
     dictionary_path = "models/dictionary.dict"
     corpus_path = "models/corpus.lda-c"
-    lda_num_topics = 50
+    lda_num_topics = 40
     lda_model_path = "models/lda_model_%d_topics.lda" % lda_num_topics
 
     dictionary = corpora.Dictionary.load(dictionary_path)
@@ -44,10 +44,9 @@ def main():
         Settings.CORPUS_COLLECTION]
     reviews_cursor = corpus_collection.find()
 
-    num_topics = 50
 
     for bid, num, bow in IDCorpus(reviews_cursor, dictionary, corpus_path):
-        dist = [0]*num_topics
+        dist = [0]*lda_num_topics
         for i, p in lda[bow]:
             dist[i] = p
         # print rid, 
